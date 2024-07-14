@@ -2,17 +2,17 @@
 #![no_main] // No default entrypoint
 
 #![feature(custom_test_frameworks)] // Custom test framework support
-#![test_runner(ros::test_runner)] // Test runner
+#![test_runner(jellyos::test_runner)] // Test runner
 #![reexport_test_harness_main = "test_main"] // Test main function
 
 use core::panic::PanicInfo;
 
 #[cfg(test)]
-use ros::serial_println;
+use jellyos::serial_println;
 #[cfg(test)]
-use ros::qemu;
+use jellyos::qemu;
 
-use ros::println;
+use jellyos::println;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
@@ -32,7 +32,7 @@ fn trivial_assertion() {
 }
 
 #[cfg(not(test))]
-use ros::vga_buffer::{Colour, ColourCode, WRITER};
+use jellyos::vga_buffer::{Colour, ColourCode, WRITER};
 
 #[cfg(not(test))]
 #[panic_handler]

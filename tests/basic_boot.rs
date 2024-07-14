@@ -1,11 +1,11 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(ros::test_runner)]
+#![test_runner(jellyos::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-use ros::println;
+use jellyos::println;
 
 #[no_mangle] // don't mangle the name of this function
 pub extern "C" fn _start() -> ! {
@@ -22,5 +22,5 @@ fn test_println() {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    ros::test_panic_handler(info)
+    jellyos::test_panic_handler(info)
 }

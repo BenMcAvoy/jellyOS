@@ -1,11 +1,11 @@
 #![feature(custom_test_frameworks)]
-#![test_runner(ros::test_runner)]
+#![test_runner(jellyos::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 #![no_std]
 #![no_main]
 
-use ros::{qemu::exit_qemu, serial_print, serial_println, qemu::QemuExitCode};
+use jellyos::{qemu::exit_qemu, serial_print, serial_println, qemu::QemuExitCode};
 use core::panic::PanicInfo;
 
 #[no_mangle]
