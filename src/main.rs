@@ -3,6 +3,8 @@
 
 use core::panic::PanicInfo;
 
+static HELLO: &[u8] = b"BEANS!";
+
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     loop {} // Never stop
@@ -10,5 +12,14 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    let vga_buffer = 0xb8000 as *mut u8; // Address of the VGA buffer (text mode)
+
+    for (i, &byte) in HELLO.iter().enumerate() {
+        unsafe {
+            *vga_buffer.offset(i as isize * 2) = byte;    // The character
+            *vga_buffer.offset(i as isize * 2 + 1) = 0xb; // The colour (cyan)
+        }
+    }
+
     loop {} // Never stop
 }

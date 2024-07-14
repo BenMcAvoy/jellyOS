@@ -3,8 +3,5 @@ name = "ros"
 version = "0.1.0"
 edition = "2021"
 
-[profile.dev]
-panic = "abort" # disable stack unwinding
-
-[profile.release]
-panic = "abort" # disable stack unwinding
+[dependencies]
+bootloader = "0.9"
