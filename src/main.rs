@@ -1,18 +1,59 @@
 #![no_std] // No standard library
 #![no_main] // No default entrypoint
 
-mod panic;
-mod vga_buffer;
+#![feature(custom_test_frameworks)] // Custom test framework support
+#![test_runner(ros::test_runner)] // Test runner
+#![reexport_test_harness_main = "test_main"] // Test main function
+
+use core::panic::PanicInfo;
+
+#[cfg(test)]
+use ros::serial_println;
+#[cfg(test)]
+use ros::qemu;
+
+use ros::println;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!(
-        "Hello, world! The numbers are {} and {}\nHello again!",
-        42,
-        1.0 / 3.0
-    );
+    println!("Hello World!");
 
-    None::<Option<i32>>.unwrap();
+    #[cfg(test)]
+    test_main();
 
+    None::<Option<u8>>.unwrap();
+
+    loop {}
+}
+
+#[test_case]
+fn trivial_assertion() {
+    assert_eq!(1, 1);
+}
+
+#[cfg(not(test))]
+use ros::vga_buffer::{Colour, ColourCode, WRITER};
+
+#[cfg(not(test))]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    {
+        // Separate scope to avoid deadlocks where the WRITER lock is held and println! tries to acquire it
+        let mut writer = WRITER.lock();
+        writer.colour_code = ColourCode::new(Colour::White, Colour::Red);
+        writer.column_position = 0;
+    }
+
+    println!("\n\n{}", info);
+
+    loop {}
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    serial_println!("[failed]\n");
+    serial_println!("Error: {}\n", info);
+    qemu::exit_qemu(qemu::QemuExitCode::Failed);
     loop {}
 }
