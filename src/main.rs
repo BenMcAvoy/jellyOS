@@ -14,9 +14,6 @@ use jellyos::qemu;
 
 use jellyos::{println, print};
 
-// How to get crate version at compile time.
-// `env!("CARGO_PKG_VERSION")` is a macro that gets the value of the `CARGO_PKG_VERSION` environment variable.
-
 const BANNER_START: &str = r#"
  ________________
 < jellyOS v"#;
@@ -43,6 +40,13 @@ const BANNER: &str = r#">
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    jellyos::init();
+
+    // page fault
+    unsafe {
+        *(0xdeadbeef as *mut u8) = 42;
+    };
+
     print!("{BANNER_START}");
     print!("{}", env!("CARGO_PKG_VERSION"));
     println!("{BANNER}");
