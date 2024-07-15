@@ -12,16 +12,43 @@ use jellyos::serial_println;
 #[cfg(test)]
 use jellyos::qemu;
 
-use jellyos::println;
+use jellyos::{println, print};
+
+// How to get crate version at compile time.
+// `env!("CARGO_PKG_VERSION")` is a macro that gets the value of the `CARGO_PKG_VERSION` environment variable.
+
+const BANNER_START: &str = r#"
+ ________________
+< jellyOS v"#;
+
+const BANNER: &str = r#">
+ ----------------
+         \     ,-.      .-,
+          \    |-.\ __ /.-|
+           \   \  `    `  /
+                /_     _ \
+              <  _`q  p _  >
+              <.._=/  \=_. >
+                 {`\()/`}`\
+                 {      }  \
+                 |{    }    \
+                 \ '--'   .- \
+                 |-      /    \
+                 | | | | |     ;
+                 | | |.;.,..__ |
+               .-"";`         `|
+              /    |           /
+              `-../____,..---'`
+"#;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello World!");
+    print!("{BANNER_START}");
+    print!("{}", env!("CARGO_PKG_VERSION"));
+    println!("{BANNER}");
 
     #[cfg(test)]
     test_main();
-
-    None::<Option<u8>>.unwrap();
 
     loop {}
 }
