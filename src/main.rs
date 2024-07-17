@@ -42,17 +42,12 @@ const BANNER: &str = r#">
 pub extern "C" fn _start() -> ! {
     jellyos::init();
 
-    // page fault
-    unsafe {
-        *(0xdeadbeef as *mut u8) = 42;
-    };
+    #[cfg(test)]
+    test_main();
 
     print!("{BANNER_START}");
     print!("{}", env!("CARGO_PKG_VERSION"));
     println!("{BANNER}");
-
-    #[cfg(test)]
-    test_main();
 
     loop {}
 }
