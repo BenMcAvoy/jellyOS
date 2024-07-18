@@ -6,37 +6,20 @@
 #![reexport_test_harness_main = "test_main"] // Test main function
 
 use core::panic::PanicInfo;
+use jellyos::{print, println};
 
-#[cfg(test)]
-use jellyos::serial_println;
-#[cfg(test)]
-use jellyos::qemu;
-
-use jellyos::{println, print};
-
-const BANNER_START: &str = r#"
- ________________
+const BANNER_TOP: &str = r#" ________________
 < jellyOS v"#;
 
-const BANNER: &str = r#">
+const BANNER: &str = r#" >
  ----------------
-         \     ,-.      .-,
-          \    |-.\ __ /.-|
-           \   \  `    `  /
-                /_     _ \
-              <  _`q  p _  >
-              <.._=/  \=_. >
-                 {`\()/`}`\
-                 {      }  \
-                 |{    }    \
-                 \ '--'   .- \
-                 |-      /    \
-                 | | | | |     ;
-                 | | |.;.,..__ |
-               .-"";`         `|
-              /    |           /
-              `-../____,..---'`
-"#;
+ \
+  \
+   \ >()_
+      (__)__ _"#;
+
+#[cfg(test)]
+use jellyos::{serial_println, qemu};
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
@@ -45,11 +28,9 @@ pub extern "C" fn _start() -> ! {
     #[cfg(test)]
     test_main();
 
-    print!("{BANNER_START}");
-    print!("{}", env!("CARGO_PKG_VERSION"));
-    println!("{BANNER}");
+    println!("{BANNER_TOP}{}{BANNER}\n", env!("CARGO_PKG_VERSION"));
 
-    loop {}
+    jellyos::hlt_loop();
 }
 
 #[test_case]
@@ -72,7 +53,7 @@ fn panic(info: &PanicInfo) -> ! {
 
     println!("\n\n{}", info);
 
-    loop {}
+    jellyos::hlt_loop();
 }
 
 #[cfg(test)]
@@ -81,5 +62,5 @@ fn panic(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     qemu::exit_qemu(qemu::QemuExitCode::Failed);
-    loop {}
+    jellyos::hlt_loop();
 }
